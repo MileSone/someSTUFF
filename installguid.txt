@@ -1,0 +1,25 @@
+﻿ ./rcu -silent -createRepository  -connectString 10.194.166.46:1521/pdbrepo1 -dbUser sys -
+dbRole sysdba -useSamePasswordForAllSchemaUsers true -schemaPrefix DEV1 -component STB -
+component WLS
+
+
+
+java -jar distribution_name.jar -silent -responseFile file [-options] [(<CommandLinevariable=Value>)*]
+
+rsp
+
+[ENGINE]
+
+#DO NOT CHANGE THIS.
+Response File Version=1.0.0.0.0
+
+[GENERIC]
+MIDDLEWARE_HOME=/u01/app/oracle/Middleware
+ORACLE_HOME=/u01/app/oracle/Middleware/Oracle_Home
+VERIDATA_PRODUCT_HOME=/u01/app/oracle/Middleware/Oracle_Home/veridata
+AGENT_ORACLE_HOME=/u01/app/oracle/Middleware/Oracle_Home/veridata/agent
+AGENT_DEPLOY_LOCATION=/u01/app/oracle/Middleware/agent_location
+
+DECLINE_AUTO_UPDATES=false
+AUTO_UPDATES_LOCATION=
+INSTALL_TYPE=Oracle GoldenGate Veridata Agent
