@@ -1,0 +1,43 @@
+{
+  metaData: [
+    { name: 'POOL_TYPE_ID' },
+    { name: 'POOL_NATURE' },
+    { name: 'TYPE' },
+    { name: 'FULL_NAME' },
+    { name: 'SHORT_NAME' },
+    { name: 'POOL_TYPE' },
+    { name: 'IS_ENABLE' },
+    { name: 'OUTPUT_SEQ' },
+    { name: 'ODDS_TYPE' },
+    { name: 'IS_EXOTIC' },
+    { name: 'REMARK' }
+  ],
+  rows: [
+    [
+      18,
+      null,
+      'Tournament',
+      'Champion',
+      'CHP',
+      'CHP',
+      1,
+      1,
+      'F',
+      0,
+      null
+    ],
+    [
+      5,
+      null,
+      'Match',
+      'Corner HiLo',
+      'CHLO',
+      'CHL',
+      1,
+      2,
+      'F',
+      0,
+      null
+    ]
+    ]
+    }
