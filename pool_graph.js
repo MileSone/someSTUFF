@@ -1,42 +1,8 @@
-/*
-
-Christopher Jones, September 2020
-https://blogs.oracle.com/opal/demo:-graphql-with-node-oracledb
-
-Instructions:
-
-    Install Node.js
-
-    Install modules: npm install
-
-    Review the node-oracledb installation requirements: https://oracle.github.io/node-oracledb/INSTALL.html
-    You many need/want to add a call to init_oracle_client() to this file.
-
-    Create the DB schema with setup.sql
-
-    Set environment variables for the DB credentials
-
-    Run this script: npm start
-
-    Open a browser to http://localhost:3000/graphql
-
-    In the GraphiQL pane try queries like:
-
-      {
-        blog(id: 2) {
-          id
-          title
-          content
-        }
-      }
-
-*/
-
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const graphqlTools = require('graphql-tools');
 const oracledb = require("oracledb");
-
+const dbConfig = require('./dbconfig.js');
 const app = express();
 
 var port = process.env.PORT || 3000;
@@ -44,27 +10,26 @@ var port = process.env.PORT || 3000;
 
 oracledb.fetchAsString = [oracledb.CLOB];
 
-// Simple schema with ID, Title and Content fields
 const typeDefs = `
 type Pool {
-  pool_type_id: Int!,
-  pool_nature:String!,
-  type: String!,
-  full_name: String!,
-  short_name: String!,
-  pool_type: String!,
-  is_enable: Int!,
-  output_seq: Int!,
-  odds_type: String!,
-  is_exotic: Int!,
-  remark: String!
+  pool_type_id: Int,
+  pool_nature: String,
+  type: String,
+  full_name: String,
+  short_name: String,
+  pool_type: String,
+  is_enable: Int,
+  output_seq: Int,
+  odds_type: String,
+  is_exotic: Int,
+  remark: String
 }
 type Query {
   pools: [Pool],
   pool(id: Int): Pool
 }
 input PoolEntry {
-  pool_nature:String!,
+  pool_nature: String,
   type: String!,
   full_name: String!,
   short_name: String!,
@@ -73,7 +38,7 @@ input PoolEntry {
   output_seq: Int!,
   odds_type: String!,
   is_exotic: Int!,
-  remark: String!
+  remark: String
 }
 type Mutation {
   createPool(input: PoolEntry): Pool!,
@@ -86,11 +51,11 @@ async function getAllPoolsHelper() {
   let conn = await oracledb.getConnection();
   let result = await conn.execute(sql);
   await conn.close();
-  let j = [];
-  for (let r of result.rows)  {
-    j.push(JSON.parse(r));
-  }
-  return j;
+  // let j = [];
+  // for (let r of result.rows)  {
+  //   j.push(r);
+  // }
+  return result;
 }
 
 async function getOnePoolHelper(id) {
@@ -99,7 +64,7 @@ async function getOnePoolHelper(id) {
   let conn = await oracledb.getConnection();
   let result = await conn.execute(sql, binds);
   await conn.close();
-  return JSON.parse(result.rows[0][0]);
+  return result.rows[0];
 }
 
 async function createPoolHelper(input) {
@@ -176,7 +141,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        createBlog(root, {input}, context, info) {
+        createPool(root, {input}, context, info) {
             return createPoolHelper(input);
         },
 
