@@ -1,3 +1,37 @@
+/*
+
+Christopher Jones, September 2020
+https://blogs.oracle.com/opal/demo:-graphql-with-node-oracledb
+
+Instructions:
+
+    Install Node.js
+
+    Install modules: npm install
+
+    Review the node-oracledb installation requirements: https://oracle.github.io/node-oracledb/INSTALL.html
+    You many need/want to add a call to init_oracle_client() to this file.
+
+    Create the DB schema with setup.sql
+
+    Set environment variables for the DB credentials
+
+    Run this script: npm start
+
+    Open a browser to http://localhost:3000/graphql
+
+    In the GraphiQL pane try queries like:
+
+      {
+        blog(id: 2) {
+          id
+          title
+          content
+        }
+      }
+
+*/
+
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const graphqlTools = require('graphql-tools');
@@ -51,11 +85,9 @@ async function getAllPoolsHelper() {
   let conn = await oracledb.getConnection();
   let result = await conn.execute(sql);
   await conn.close();
-  // let j = [];
-  // for (let r of result.rows)  {
-  //   j.push(r);
-  // }
-  return result;
+  console.log("convertor");
+  console.log(jsonCoverter(result));
+  return jsonCoverter(result);
 }
 
 async function getOnePoolHelper(id) {
@@ -154,6 +186,22 @@ const resolvers = {
         }
     }
 };
+
+function jsonCoverter(obj) {
+    var metaData,rows = [];
+    metaData = obj.metaData;
+    rows = obj.rows;
+
+    var newResult = [];
+
+    metaData.forEach(function (item, index) {
+        var newObjString= '{'+ metaData[index].name + ':' + rows[index] + '}'
+        let newObj = JSON.parse(newObjString);
+        newResult.push(newObj);
+    })
+
+    return newResult;
+}
 
 // Build the schema with Type Definitions and Resolvers
 const schema = graphqlTools.makeExecutableSchema({typeDefs, resolvers});
