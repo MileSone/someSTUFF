@@ -48,6 +48,7 @@ oracledb.fetchAsString = [oracledb.CLOB];
 const typeDefs = `
 type Pool {
   pool_type_id: Int!,
+  pool_nature:String!,
   type: String!,
   full_name: String!,
   short_name: String!,
@@ -55,13 +56,15 @@ type Pool {
   is_enable: Int!,
   output_seq: Int!,
   odds_type: String!,
-  is_exotic: Int!
+  is_exotic: Int!,
+  remark: String!
 }
 type Query {
   pools: [Pool],
   pool(id: Int): Pool
 }
 input PoolEntry {
+  pool_nature:String!,
   type: String!,
   full_name: String!,
   short_name: String!,
@@ -69,7 +72,8 @@ input PoolEntry {
   is_enable: Int!,
   output_seq: Int!,
   odds_type: String!,
-  is_exotic: Int!
+  is_exotic: Int!,
+  remark: String!
 }
 type Mutation {
   createPool(input: PoolEntry): Pool!,
@@ -105,13 +109,15 @@ async function createPoolHelper(input) {
   let result = await conn.execute(sql, binds);
   const newPool = {id: result.outBinds.id,
         type: input.type,
+        pool_nature: input.pool_nature,
         full_name: input.full_name,
         short_name: input.short_name,
         pool_type: input.pool_type,
         is_enable: input.is_enable,
         output_seq: input.output_seq,
         odds_type: input.odds_type,
-        is_exotic: input.is_exotic};
+        is_exotic: input.is_exotic,
+        remark: input.remark};
   const js = JSON.stringify(newPool);
   sql = 'INSERT INTO POOL_TYPE_BACKUP VALUES(:b)';
   binds = [js];
@@ -127,6 +133,7 @@ async function updatePoolHelper(id, input) {
   let result = await conn.execute(sql, binds);
   let j = JSON.parse(result.rows[0][0]);
   j.type = input.type;
+  j.pool_nature = input.pool_nature;
   j.full_name = input.full_name;
   j.short_name = input.short_name;
   j.pool_type = input.pool_type;
@@ -134,6 +141,7 @@ async function updatePoolHelper(id, input) {
   j.output_seq = input.output_seq;
   j.odds_type = input.odds_type;
   j.is_exotic = input.is_exotic;
+  j.remark = input.remark;
   const js = JSON.stringify(j);
   sql = 'DELETE FROM POOL_TYPE_BACKUP b WHERE b.pool_type_id = :id';
   result = await conn.execute(sql, binds, {autoCommit: false});
