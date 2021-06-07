@@ -59,7 +59,7 @@ type Pool {
 }
 type Query {
   pools: [Pool],
-  pool(pool_type_id: Int): Pool
+  pool(id: Int): Pool
 }
 input PoolEntry {
   type: String!,
@@ -69,12 +69,12 @@ input PoolEntry {
   is_enable: Int!,
   output_seq: Int!,
   odds_type: String!,
-  is_exptic: Int!
+  is_exotic: Int!
 }
 type Mutation {
   createPool(input: PoolEntry): Pool!,
-  updatePool(pool_type_id: Int, input: PoolEntry): Pool!,
-  deletePool(pool_type_id: Int): Pool!
+  updatePool(id: Int, input: PoolEntry): Pool!,
+  deletePool(id: Int): Pool!
 }`;
 
 async function getAllPoolsHelper() {
@@ -103,7 +103,7 @@ async function createPoolHelper(input) {
   let conn = await oracledb.getConnection();
   let binds = {id: {dir: oracledb.BIND_OUT, type: oracledb.NUMBER }};
   let result = await conn.execute(sql, binds);
-  const newBlog = {id: result.outBinds.id,
+  const newPool = {id: result.outBinds.id,
         type: input.type,
         full_name: input.full_name,
         short_name: input.short_name,
@@ -111,13 +111,13 @@ async function createPoolHelper(input) {
         is_enable: input.is_enable,
         output_seq: input.output_seq,
         odds_type: input.odds_type,
-        is_exptic: input.is_exotic};
-  const js = JSON.stringify(newBlog);
+        is_exotic: input.is_exotic};
+  const js = JSON.stringify(newPool);
   sql = 'INSERT INTO POOL_TYPE_BACKUP VALUES(:b)';
   binds = [js];
   result = await conn.execute(sql, binds, {autoCommit: true});
   await conn.close();
-  return newBlog;
+  return newPool;
 }
 
 async function updatePoolHelper(id, input) {
@@ -133,7 +133,7 @@ async function updatePoolHelper(id, input) {
   j.is_enable = input.is_enable;
   j.output_seq = input.output_seq;
   j.odds_type = input.odds_type;
-  j.is_exptic = input.is_exotic;
+  j.is_exotic = input.is_exotic;
   const js = JSON.stringify(j);
   sql = 'DELETE FROM POOL_TYPE_BACKUP b WHERE b.pool_type_id = :id';
   result = await conn.execute(sql, binds, {autoCommit: false});
@@ -158,29 +158,28 @@ async function deletePoolHelper(id) {
   return j;
 }
 
-// Resolver to match the GraphQL query and return data
 const resolvers = {
-  Query: {
-    blogs(root, args, context, info) {
-      return getAllPoolsHelper();
+    Query: {
+        pools(root, args, context, info) {
+            return getAllPoolsHelper();
+        },
+        pool(root, {id}, context, info) {
+            return getOnePoolHelper(id);
+        }
     },
-    blog(root, {id}, context, info) {
-      return getOnePoolHelper(id);
-    }
-  },
-  Mutation: {
-    createBlog(root, {input}, context, info) {
-      return createPoolHelper(input);
-    },
+    Mutation: {
+        createBlog(root, {input}, context, info) {
+            return createPoolHelper(input);
+        },
 
-    updateBlog(root, {id, input}, context, info) {
-      return updatePoolHelper(id, input);
-    },
+        updatePool(root, {id, input}, context, info) {
+            return updatePoolHelper(id, input);
+        },
 
-    deleteBlog(root, {id}, context, info) {
-      return deletePoolHelper(id);
+        deletePool(root, {id}, context, info) {
+            return deletePoolHelper(id);
+        }
     }
-  }
 };
 
 // Build the schema with Type Definitions and Resolvers
