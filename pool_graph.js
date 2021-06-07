@@ -196,23 +196,24 @@ function jsonCoverter(obj) {
 
 
     rows.forEach(function (row, count) {
-        var emptyObjString = '{';
         metaData.forEach(function (item, index) {
+            var emptyObjString = '{';
             var com = '';
             if (index !== 0) {
                 com = ','
             }
             var newObjString = com + '"' + metaData[index].name + '":' + rows[index];
             emptyObjString += newObjString;
-            if (index == metaData.length) {
+            if (index == metaData.length - 1) {
                 emptyObjString += '}';
+                console.log(emptyObjString);
+                var newObj = JSON.parse(emptyObjString);
+                newResult.push(newObj)
             }
         })
-        console.log(emptyObjString);
-        var newObj = JSON.parse(emptyObjString);
-        newResult.push(newObj)
     })
 
+    console.log(newResult.length);
 
     return newResult;
 }
