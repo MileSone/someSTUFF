@@ -110,7 +110,7 @@ type Pool {
 type Query {
   pools: [Pool],
   pool(id: Int): Pool,
-  pool(fullname: String): Pool
+  poolN(fullname: String): Pool
 }
 input PoolEntry {
   POOL_NATURE: String,
@@ -146,8 +146,7 @@ async function getOnePoolByNameHelper(name) {
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
-    console.log(jsonCoverter(result.rows[0]));
-    return jsonCoverter(result.rows[0]);
+    return jsonCoverter(result)[0];
 }
 
 async function getOnePoolHelper(id) {
@@ -156,7 +155,7 @@ async function getOnePoolHelper(id) {
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
-    return jsonCoverter(result.rows[0]);
+    return jsonCoverter(result)[0];
 }
 
 async function createPoolHelper(input) {
@@ -165,17 +164,17 @@ async function createPoolHelper(input) {
     let binds = {id: {dir: oracledb.BIND_OUT, type: oracledb.NUMBER}};
     let result = await conn.execute(sql, binds);
     const newPool = {
-        id: result.outBinds.id,
-        type: input.type,
-        pool_nature: input.pool_nature,
-        full_name: input.full_name,
-        short_name: input.short_name,
-        pool_type: input.pool_type,
-        is_enable: input.is_enable,
-        output_seq: input.output_seq,
-        odds_type: input.odds_type,
-        is_exotic: input.is_exotic,
-        remark: input.remark
+        POOL_TYPE_ID: result.outBinds.id,
+        TYPE: input.TYPE,
+        POOL_NATURE: input.POOL_NATURE,
+        FULL_NAME: input.FULL_NAME,
+        SHORT_NAME: input.SHORT_NAME,
+        POOL_TYPE: input.POOL_TYPE,
+        IS_ENABLE: input.IS_ENABLE,
+        OUTPUT_SEQ: input.OUTPUT_SEQ,
+        ODDS_TYPE: input.ODDS_TYPE,
+        IS_EXOTIC: input.IS_EXOTIC,
+        REMARK: input.REMARK
     };
     const js = JSON.stringify(newPool);
     sql = 'INSERT INTO POOL_TYPE_BACKUP VALUES(:b)';
@@ -234,7 +233,7 @@ const resolvers = {
         pool(root, {id}, context, info) {
             return getOnePoolHelper(id);
         },
-        pool(root, {fullname}, context, info) {
+        poolN(root, {fullname}, context, info) {
             return getOnePoolByNameHelper(fullname);
         }
     },
