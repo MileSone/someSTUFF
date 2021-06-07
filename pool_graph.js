@@ -32,6 +32,8 @@ Instructions:
 
 */
 
+
+
 const express = require('express');
 const {graphqlHTTP} = require('express-graphql');
 const graphqlTools = require('graphql-tools');
@@ -43,6 +45,51 @@ var port = process.env.PORT || 3000;
 
 
 oracledb.fetchAsString = [oracledb.CLOB];
+
+
+// let sampleData = {
+//     metaData: [
+//         { name: 'POOL_TYPE_ID' },
+//         { name: 'POOL_NATURE' },
+//         { name: 'TYPE' },
+//         { name: 'FULL_NAME' },
+//         { name: 'SHORT_NAME' },
+//         { name: 'POOL_TYPE' },
+//         { name: 'IS_ENABLE' },
+//         { name: 'OUTPUT_SEQ' },
+//         { name: 'ODDS_TYPE' },
+//         { name: 'IS_EXOTIC' },
+//         { name: 'REMARK' }
+//     ],
+//     rows: [
+//         [
+//             18,
+//             null,
+//             'Tournament',
+//             'Champion',
+//             'CHP',
+//             'CHP',
+//             1,
+//             1,
+//             'F',
+//             0,
+//             null
+//         ],
+//         [
+//             5,
+//             null,
+//             'Match',
+//             'Corner HiLo',
+//             'CHLO',
+//             'CHL',
+//             1,
+//             2,
+//             'F',
+//             0,
+//             null
+//         ]
+//     ]
+// }
 
 const typeDefs = `
 type Pool {
@@ -96,7 +143,7 @@ async function getOnePoolHelper(id) {
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
-    return result.rows[0];
+    return jsonCoverter(result.rows[0]);
 }
 
 async function createPoolHelper(input) {
@@ -130,7 +177,7 @@ async function updatePoolHelper(id, input) {
     let binds = [id];
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
-    let j = JSON.parse(result.rows[0][0]);
+    let j = jsonCoverter(result.rows[0][0]);
     j.type = input.type;
     j.pool_nature = input.pool_nature;
     j.full_name = input.full_name;
@@ -155,7 +202,8 @@ async function deletePoolHelper(id) {
     let sql = 'SELECT * FROM POOL_TYPE_BACKUP b WHERE b.pool_type_id = :id';
     let binds = [id];
     let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql, binds);
+    var result = await conn.execute(sql, binds);
+    var result = jsonCoverter(result);
     if (result.rows.length === 0)
         return null;
     let j = JSON.parse(result.rows[0][0]);
@@ -189,32 +237,31 @@ const resolvers = {
     }
 };
 
+
+
 function jsonCoverter(obj) {
     var metaData, rows = [];
     metaData = obj.metaData;
-    rows = obj.rows[0];
+    rows = obj.rows;
 
-
+    var newResult = [];
     rows.forEach(function (row, count) {
+        var emptyObjString = '{';
         metaData.forEach(function (item, index) {
-            var emptyObjString = '{';
             var com = '';
             if (index !== 0) {
                 com = ','
             }
-            var newObjString = com + '"' + metaData[index].name + '":' + rows[index];
+            var newObjString = com + '"' + metaData[index].name + '":"' + rows[count][index] +'"';
             emptyObjString += newObjString;
             if (index == metaData.length - 1) {
                 emptyObjString += '}';
-                console.log(emptyObjString);
                 var newObj = JSON.parse(emptyObjString);
                 newResult.push(newObj)
             }
         })
     })
-
     console.log(newResult.length);
-
     return newResult;
 }
 
