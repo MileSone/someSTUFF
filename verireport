@@ -1,0 +1,304 @@
+                       Oracle GoldenGate Veridata
+                             12.2.1.4.210420
+
+Copyright (C) 2004, 2021, Oracle and/or its affiliates. All rights reserved
+
+               Starting Comparison at 2021-06-07 16:37:00
+
+
+OS          : Linux
+Version     : 4.12.14-122.54-default
+Node        : ORAPOCTST5
+Machine     : amd64
+Process id  : 5397, Thread id : 235
+Java version: 1.8.0_291
+Java vendor : Oracle Corporation
+
+
+Compare Pair: ORG_F_RS_BET_TB_TBL_6=ORG_F_RS_BET_TB_TBL_6_AutoPartition0
+Run ID      : (1002,1,1)
+
+Compare Parameters:
+
+    Source connection: DIYDB
+    Source host      : 10.194.166.46  (oracle)
+    Target connection: EXADATA
+    Target host      : 10.194.163.226  (oracle)
+    Source table     : PDB.COMMON_AB.ORG_F_RS_BET_TB_TBL_6
+    Target table     : COMMON_AB.ORG_F_RS_BET_TB_TBL_6
+
+    Partition Type   : Auto
+
+    Source partition  : AutoPartition0 (10,0)
+    Target partition  : AutoPartition0 (10,0)
+
+
+Profile: $default
+
+
+General:
+          Out-Of-Sync Output Format: binary
+   Maximum Size of Each Out-Of-Sync
+                   XML Chunk (Rows): 500
+ Report in-sync rows to report file: false
+     Report in-sync after in-flight
+                rows to report file: false
+
+Sorting Method:
+                    Sort Data Using: server
+    Temporary Storage Directory for
+                        Source Data: 
+    Temporary Storage Directory for
+                        Target Data: 
+
+Initial Compare:
+  Max Concurrent Comparison Threads: 4
+     Terminate when Maximum Records
+                        Out-Of-Sync: 100000
+  Output Out-Of-Sync Record Details
+                     to Report File: false
+ Update Report file Every (seconds): 0
+ Update Report file Every (records): 0
+         Limit Number of Input Rows: 0
+       Source Oracle optimizer hint: 
+       Target Oracle optimizer hint: 
+           delta processing enabled: false
+
+Initial Compare (Event Reporting):
+                  Generate Messages: none
+      Generate Warning Messages For
+            Out-Of-Sync Rows After 
+                      (differences): 50
+
+Initial Compare (Agent):
+      Use Static Listening Port For
+ Agent During Row Hash On Source (0
+          to use dynamic port list): 0
+      Use Static Listening Port For
+ Agent During Row Hash On Target (0
+          to use dynamic port list): 0
+
+Initial Compare (NonStop Process):
+ Source Process Name Starting With 
+  (Must start with '$', followed by
+     two letters, and end with '*'.
+                     Example: $AA*): 
+          Source Process CPU Number: -1
+            Source Process Priority: 0
+ Target Process Name Starting With 
+  (Must start with '$', followed by
+     two letters, and end with '*'.
+                     Example: $AA*): 
+          Target Process CPU Number: -1
+            Target Process Priority: 0
+
+Confirm-Out-Of-Sync:
+   Perform Confirm Out-Of-Sync Step: true
+      Run Concurrently With Initial
+                            Compare: true
+     Confirm-Out-Of-Sync Batch Size: 10
+      Delay Confirm-Out-Of-Sync By 
+                          (seconds): 0
+     Terminate when Maximum Records
+                        Out-Of-Sync: 100000
+  Output Out-Of-Sync Record Details
+                     to Report File: false
+ Update Report file Every (seconds): 0
+ Update Report file Every (records): 0
+       Source Oracle optimizer hint: 
+       Target Oracle optimizer hint: 
+
+Confirm-Out-Of-Sync (Event Reporting):
+                  Generate Messages: none
+      Generate Warning Messages For
+            Out-Of-Sync Rows After 
+                      (differences): 50
+
+Confirm-Out-Of-Sync (Agent):
+      Use Static Listening Port For
+ Agent During Row Hash On Source (0
+          to use dynamic port list): 0
+      Use Static Listening Port For
+ Agent During Row Hash On Target (0
+          to use dynamic port list): 0
+
+Confirm-Out-Of-Sync (NonStop Process):
+ Source Process Name Starting With 
+  (Must start with '$', followed by
+     two letters, and end with '*'.
+                     Example: $AA*): 
+          Source Process CPU Number: -1
+            Source Process Priority: 0
+ Target Process Name Starting With 
+  (Must start with '$', followed by
+     two letters, and end with '*'.
+                     Example: $AA*): 
+          Target Process CPU Number: -1
+            Target Process Priority: 0
+
+Repair:
+     Run Repair Automatically after
+                            Compare: false
+                  Repair Batch Size: 10
+            Repair Transaction Size: 1
+        Number of Concurrent Repair
+                         Operations: 1
+               Check Changed Values: true
+      Terminate When Maximum Repair
+                           Warnings: 10000
+                    Repair SQL Path: /tmp
+
+Repair (Repair Reporting):
+   Write Repair Success Messages to
+                             Report: true
+
+Repair (Disable DB Triggers Session Based):
+  Disable DB Triggers Session Based: false
+
+
+Starting  Veridata Agent session for source rowhash at  2021-06-07 16:37:00.
+
+rowhash source Agent Information:
+                 Version: 12.2.1.4.210420
+            Java version: 1.8.0_291
+             SSL enabled: false
+                JDBC URL: jdbc:oracle:thin:@//localhost:1521/PDB
+              Session ID: 89
+                SortNull: high
+         RepairSupported: true
+        Database version: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.3.0.0.0
+      Database driver(s): ojdbc8.jar oracle.xdb.jar
+          Driver version: 19.7.0.0.0
+        NLS_CHARACTERSET: AL32UTF8
+
+Starting  Veridata Agent session for target rowhash at  2021-06-07 16:37:00.
+
+rowhash target Agent Information:
+                 Version: 12.2.1.4.210420
+            Java version: 1.8.0_291
+             SSL enabled: false
+                JDBC URL: jdbc:oracle:thin:@//dedwdb01-vip:1521/testdb.corpdevhkjc.com
+              Session ID: 34
+                SortNull: high
+         RepairSupported: true
+        Database version: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.5.0.0.0
+      Database driver(s): ojdbc8.jar oracle.xdb.jar
+          Driver version: 19.7.0.0.0
+        NLS_CHARACTERSET: AL32UTF8
+
+Performance Statistics for Source Rowhash at 2021-06-07 17:28:16.
+
+    rows                : 1834952
+    duration (secs)     : 00:51:14
+    rows/sec            : 596
+    row bytes           : 74254409464
+    row bytes/sec       : 24147979
+    bytes/row           : 40466
+    rows skipped        : 0
+    blocks skipped      : 0
+    time fetching       : 00:51:13
+    time until first row: 00:00:03
+    ipc msgs            : 350
+    ipc bytes           : 55093547
+    bytes/msg           : 157281
+    compressed bytes/msg: 64761
+    compressed bytes/sec: 7371
+    compression ratio   : 0.41
+
+Comparing first row at 2021-06-07 17:55:59
+
+Performance Statistics for Target Rowhash at 2021-06-07 17:55:59.
+
+    rows                : 1834952
+    duration (secs)     : 01:18:57
+    rows/sec            : 387
+    row bytes           : 74254409464
+    row bytes/sec       : 15673449
+    bytes/row           : 40466
+    rows skipped        : 0
+    blocks skipped      : 0
+    time fetching       : 01:18:55
+    time until first row: 00:00:01
+    ipc msgs            : 524
+    ipc bytes           : 55108673
+    bytes/msg           : 105054
+    compressed bytes/msg: 47066
+    compressed bytes/sec: 5205
+    compression ratio   : 0.45
+
+ Summarizing Initial Row Comparison Step 
+
+    Time                 : 2021-06-07 17:55:59
+    Elapsed Time         : 00:00:00
+    Comparisons performed: 1834952
+    Rows per second      : 3954637
+    Rows out-of-sync     : 0
+    inserts              : 0
+    updates              : 0
+    deletes              : 0
+
+ source sort statistics 
+
+    Elapsed Time     : 00:51:15
+    Records sorted   : 1834952
+    Bytes sorted     : 55048560
+    Sort space used  : 55574528
+    Input wait time  : 01:57:13
+    Buffer wait time : 00:00:00
+    Write wait time  : 00:00:00
+    Read wait time   : 00:00:00
+    Memory wait time : 00:00:00
+    Memory size      : 50
+    Memory requested : 0
+
+ target sort statistics 
+
+    Elapsed Time     : 01:18:57
+    Records sorted   : 1834952
+    Bytes sorted     : 55048560
+    Sort space used  : 55574528
+    Input wait time  : 04:33:46
+    Buffer wait time : 00:00:00
+    Write wait time  : 00:00:00
+    Read wait time   : 00:00:00
+    Memory wait time : 00:00:00
+    Memory size      : 50
+    Memory requested : 0
+
+
+
+ Summarizing Confirm Out-of-Sync Step 
+
+
+    Time                 : 2021-06-07 17:55:59
+    Elapsed Time         : 00:00:00
+    Rows confirmed       : 0
+    Rows per second      : 0
+
+ Summarizing Persistently Out-of-Sync Rows 
+
+    Rows out-of-sync                 : 0
+    inserts                          : 0
+    updates                          : 0
+    deletes                          : 0
+
+ Summarizing In-Sync-after-In-Flight Rows 
+
+    Rows in-sync-after-in-flight     : 0
+    inserts                          : 0
+    updates                          : 0
+    deletes                          : 0
+
+ Summarizing Still-Changing Rows 
+
+    Rows in-flight                   : 0
+    inserts                          : 0
+    updates                          : 0
+    deletes                          : 0
+
+
+tables in sync: source PDB.COMMON_AB.ORG_F_RS_BET_TB_TBL_6, target COMMON_AB.ORG_F_RS_BET_TB_TBL_6
+
+Comparison terminated normally.
