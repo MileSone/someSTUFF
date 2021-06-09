@@ -85,7 +85,7 @@ LAST_UPDATE_DATE: String
 type Query {
   ticketsInRange(range: Int): [Ticket],
   tickets(os: Int, rw: Int): [Ticket],
-  ticket(id: Int): Ticket,
+  ticket(id: Int): [Ticket],
   ticketFilter(attribute: String,value: String,range: Int): [Ticket]
 }`;
 
@@ -132,6 +132,14 @@ type Query {
 
 async function getAllTickets() {
     let sql = 'SELECT * FROM ' + DBTABLE;
+    let conn = await oracledb.getConnection();
+    let result = await conn.execute(sql);
+    await conn.close();
+    return jsonCoverter(result);
+}
+
+async function getTicketsByOffset(offset,rows){
+    let sql = 'SELECT * FROM ' + DBTABLE + ' OFFSET ' + offset+ ' ROWS FETCH NEST ' +rows+ ' ROWS ONLY';
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql);
     await conn.close();
