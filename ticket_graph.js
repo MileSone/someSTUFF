@@ -83,11 +83,10 @@ CREATE_DATE: String,
 LAST_UPDATE_DATE: String 
 }
 type Query {
-  TicketsIn(range: Int): [Ticket],
-  Tickets(os: Int, rw: Int): [Ticket],
-  Ticket(id: Int): Ticket,
-  TicketINV(id: Int): Ticket,
-  TicketDIV(id: Int): Ticket
+  ticketsInRange(range: Int): [Ticket],
+  tickets(os: Int, rw: Int): [Ticket],
+  ticket(id: Int): Ticket,
+  ticketFilter(attribute: String,value: String,range: Int): [Ticket]
 }`;
 
 
@@ -139,8 +138,8 @@ async function getAllTickets() {
     return jsonCoverter(result);
 }
 
-async function getTicketsByRange(range) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' where rownum < ' + range + 1 ;
+async function getTicketsByRange(range){
+    let sql = 'SELECT * FROM ' + DBTABLE + ' where rownum <=' + range;
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql);
     await conn.close();
@@ -148,54 +147,9 @@ async function getTicketsByRange(range) {
 }
 
 
-
-async function getTicketBySellingDate(date) {
-    let newDate = "to_date('"+ date +"','ww mm dd yyyy hh24-mi-ss')";
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.selling_date like \'' + newDate +'\'';
-    let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql);
-    await conn.close();
-    return jsonCoverter(result);
-}
-
-async function getTicketsByOffset(offset,rows){
-    let sql = 'SELECT * from '+ DBTABLE +' OFFSET '+offset+' ROWS FETCH NEXT '+rows+' ROWS ONLY';
-    let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql);
-    await conn.close();
-    return jsonCoverter(result);
-}
-
-async function getTicketByINV(id) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.INV = :id';
-    let binds = [id];
-    let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql, binds);
-    await conn.close();
-    return jsonCoverter(result);
-}
-
-async function getTicketByDIV(id) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.DIV = :id';
-    let binds = [id];
-    let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql, binds);
-    await conn.close();
-    return jsonCoverter(result);
-}
-
-async function getTicketByStaff(id) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.staff_no = :id';
-    let binds = [id];
-    let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql, binds);
-    await conn.close();
-    return jsonCoverter(result);
-}
-
-async function getTicketsByChannel(channel) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.channel_id = :channel';
-    let binds = [channel];
+async function getTicketByAttributeAndValueInRange(attr,value,range) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.'+ attr +' = :value AND ROWNUM <= ' + range;
+    let binds = [value];
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
@@ -283,26 +237,18 @@ const resolvers = {
         // Tickets(root, args, context, info) {
         //     return getAllTickets();
         // },
-        Tickets(root, {os,rw}, context, info) {
+        tickets(root, {os,rw}, context, info) {
             return getTicketsByOffset(os,rw)
         },
-        TicketsIn(root, {range}, context, info) {
+        ticketsInRange(root, {range}, context, info) {
             return getTicketsByRange(range)
         },
-        Ticket(root, {id}, context, info) {
+        ticket(root, {id}, context, info) {
             return getTicketByID(id);
         },
-        TicketSellDate(root, {date}, context, info) {
-            return getTicketBySellingDate(date);
-        },
-        TicketINV(root, {id}, context, info) {
-            return getTicketByINV(id);
-        },
-        TicketDIV(root, {id}, context, info) {
-            return getTicketByDIV(id);
-        },
-
-
+        ticketFilter(root, {attribute,value,range}, context, info) {
+            return getTicketByAttributeAndValueInRange(attribute,value,range);
+        }
     }
     // Mutation: {
     //     createTicketFuc(root, {input}, context, info) {
