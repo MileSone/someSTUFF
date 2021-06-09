@@ -1,0 +1,33 @@
+FB_SEASON          NOT NULL NUMBER(38)   
+FB_MONTH           NOT NULL NUMBER(38)   
+OLTP_ID                     VARCHAR2(5)  
+MSG_ORDER_NO                NUMBER(38)   
+SELLING_DATE                DATE         
+SRC_TICKET_ID               NUMBER(38)   
+ACCT_ID                     NUMBER(38)   
+ACCT_SCD_DATE               DATE         
+CUST_ID                     NUMBER(38)   
+FRONTEND_ID                 NUMBER(38)   
+FRONTEND_SCD_DATE           DATE         
+SESSION_ID                  NUMBER(20)   
+CHANNEL_ID                  NUMBER(38)   
+ALLUP_FORMULA               VARCHAR2(10) 
+IS_CTRL_ALLUP               NUMBER(38)   
+UNIT_BET                    NUMBER(20,2) 
+INV                         NUMBER(20,2) 
+DIV                         NUMBER(20,2) 
+INV_REFUND                  NUMBER(20,2) 
+STAFF_NO                    VARCHAR2(11) 
+ACCT_TXN_NO                 NUMBER(38)   
+SELLING_DTM                 DATE         
+IS_TERMINATED               NUMBER(38)   
+IS_CANCELLED                NUMBER(38)   
+IS_CONCLUDED                NUMBER(38)   
+TKT_CONCLUDED_DATE          DATE         
+IS_INTERCEPT                NUMBER(38)   
+IS_CROSS_SELLING            NUMBER(38)   
+IS_AUTO_ACCEPTED            NUMBER(38)   
+CREATE_META_JOB_ID          NUMBER(38)   
+UPDATE_META_JOB_ID          NUMBER(38)   
+CREATE_DATE                 DATE         
+LAST_UPDATE_DATE 
