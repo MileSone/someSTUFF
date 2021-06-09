@@ -72,13 +72,13 @@ ACCT_TXN_NO: Int,
 SELLING_DTM: String,          
 IS_TERMINATED: Int,   
 IS_CANCELLED: Int,   
-IS_CONCLUDED: Int,   
+IS_CONCLUDED: String,   
 TKT_CONCLUDED_DATE: String,        
 IS_INTERCEPT: Int,   
 IS_CROSS_SELLING: Int,   
 IS_AUTO_ACCEPTED: Int,   
-CREATE_META_JOB_ID: Int,   
-UPDATE_META_JOB_ID: Int,   
+CREATE_META_JOB_ID: String,   
+UPDATE_META_JOB_ID: String,   
 CREATE_DATE: String,         
 LAST_UPDATE_DATE: String 
 }
@@ -86,9 +86,9 @@ type Query {
   TicketsIn(range: Int): [Ticket],
   Tickets(os: Int, rw: Int): [Ticket],
   Ticket(id: Int): Ticket,
-  TicketMonth(month : Int): [Ticket],
-  TicketSell(date: String): [Ticket],
-  TicketChannel(id: Int): [Ticket]
+  TicketAccountTXN(id : Int): [Ticket],
+  TicketStaff(id: String): [Ticket],
+  TicketSellDate(date: String): [Ticket]
 }`;
 
 
@@ -137,13 +137,11 @@ async function getAllTickets() {
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql);
     await conn.close();
-    // console.log("convertor");
-    // console.log(jsonCoverter(result));
     return jsonCoverter(result);
 }
 
 async function getTicketsByRange(range) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' where rownum < ' + range;
+    let sql = 'SELECT * FROM ' + DBTABLE + ' where rownum < ' + range + 1 ;
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql);
     await conn.close();
@@ -152,9 +150,9 @@ async function getTicketsByRange(range) {
 
 
 
-async function getTicketsByMonth(month) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.fb_month = :month';
-    let binds = [month];
+async function getTicketBySellingDate(date) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.selling_date like \':date\'';
+    let binds = [date];
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
@@ -169,9 +167,18 @@ async function getTicketsByOffset(offset,rows){
     return jsonCoverter(result);
 }
 
-async function getTicketsBySellingDate(date) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.selling_date = :date';
-    let binds = [date];
+async function getTicketByAccountTXN(id) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.acct_txn_no = :id';
+    let binds = [id];
+    let conn = await oracledb.getConnection();
+    let result = await conn.execute(sql, binds);
+    await conn.close();
+    return jsonCoverter(result);
+}
+
+async function getTicketByStaff(id) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.staff_no = :id';
+    let binds = [id];
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
     await conn.close();
@@ -277,15 +284,15 @@ const resolvers = {
         Ticket(root, {id}, context, info) {
             return getTicketByID(id);
         },
-        TicketMonth(root, {month}, context, info) {
-            return getTicketsByMonth(month);
+        TicketAccountTXN(root, {id}, context, info) {
+            return getTicketByAccountTXN(id);
         },
-        TicketSell(root, {date}, context, info) {
-            return getTicketsBySellingDate(date);
+        TicketStaff(root, {id}, context, info) {
+            return getTicketByStaff(id);
         },
-        TicketChannel(root, {id}, context, info) {
-            return getTicketsByChannel(id);
-        }
+        TicketSellDate(root, {date}, context, info) {
+            return getTicketBySellingDate(date);
+        },
     }
     // Mutation: {
     //     createTicketFuc(root, {input}, context, info) {
