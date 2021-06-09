@@ -59,7 +59,7 @@ ACCT_SCD_DATE: String,
 CUST_ID: String,   
 FRONTEND_ID : Int, 
 FRONTEND_SCD_DATE: String,         
-SESSION_ID: Double,  
+SESSION_ID: String,  
 CHANNEL_ID : String,   
 ALLUP_FORMULA: String, 
 IS_CTRL_ALLUP: Int,   
@@ -86,9 +86,8 @@ type Query {
   TicketsIn(range: Int): [Ticket],
   Tickets(os: Int, rw: Int): [Ticket],
   Ticket(id: Int): Ticket,
-  TicketAccountTXN(id : Int): [Ticket],
-  TicketStaff(id: String): [Ticket],
-  TicketSellDate(date: String): [Ticket]
+  TicketINV(id: Int): Ticket,
+  TicketDIV(id: Int): Ticket
 }`;
 
 
@@ -151,10 +150,10 @@ async function getTicketsByRange(range) {
 
 
 async function getTicketBySellingDate(date) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.selling_date like \':date\'';
-    let binds = [date];
+    let newDate = "to_date('"+ date +"','ww mm dd yyyy hh24-mi-ss')";
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.selling_date like \'' + newDate +'\'';
     let conn = await oracledb.getConnection();
-    let result = await conn.execute(sql, binds);
+    let result = await conn.execute(sql);
     await conn.close();
     return jsonCoverter(result);
 }
@@ -167,8 +166,17 @@ async function getTicketsByOffset(offset,rows){
     return jsonCoverter(result);
 }
 
-async function getTicketByAccountTXN(id) {
-    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.acct_txn_no = :id';
+async function getTicketByINV(id) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.INV = :id';
+    let binds = [id];
+    let conn = await oracledb.getConnection();
+    let result = await conn.execute(sql, binds);
+    await conn.close();
+    return jsonCoverter(result);
+}
+
+async function getTicketByDIV(id) {
+    let sql = 'SELECT * FROM ' + DBTABLE + ' b WHERE b.DIV = :id';
     let binds = [id];
     let conn = await oracledb.getConnection();
     let result = await conn.execute(sql, binds);
@@ -284,15 +292,17 @@ const resolvers = {
         Ticket(root, {id}, context, info) {
             return getTicketByID(id);
         },
-        TicketAccountTXN(root, {id}, context, info) {
-            return getTicketByAccountTXN(id);
-        },
-        TicketStaff(root, {id}, context, info) {
-            return getTicketByStaff(id);
-        },
         TicketSellDate(root, {date}, context, info) {
             return getTicketBySellingDate(date);
         },
+        TicketINV(root, {id}, context, info) {
+            return getTicketByINV(id);
+        },
+        TicketDIV(root, {id}, context, info) {
+            return getTicketByDIV(id);
+        },
+
+
     }
     // Mutation: {
     //     createTicketFuc(root, {input}, context, info) {
